@@ -16,8 +16,6 @@ int main(void) {
     abys_Window* window = abys_OpenWindow(WINDOW_WIDTH, WINDOW_HEGITH, "Abyss-IDE", 0);
 
 
-    NVGcontext* vg = nvgCreateGL3(NVG_ANTIALIAS);
-
     while (abys_RunWindow(window)) {
 
         abys_ClearBackground(0.35, 0.35, 0.35);
