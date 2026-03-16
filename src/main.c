@@ -32,7 +32,6 @@ int main(void) {
 
     abys_Button* btn1 = abys_CreateButton(window, &ABYS_RECT(50, 200, 300, 120), RED, LIME);
 
-    abys_Text* txt1 = abys_CreateText(window, "COOPBL.TTF", 20.0f);
 
 
     abys_Event event;
@@ -55,6 +54,7 @@ int main(void) {
 
 
         abys_BeginFrame(window);
+    abys_Text* txt1 = abys_CreateText(window, "COOPBL.TTF", 20.0f);
 
 
             // abys_UpdateButton(btn1, btn1cb);
@@ -65,7 +65,7 @@ int main(void) {
 
 
     abys_DestroyButton(btn1);
-    abys_DestroyText(txt1);
+    // abys_DestroyText(txt1);
 
     abys_CloseWindow(window);
 }
