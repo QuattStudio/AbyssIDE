@@ -8,6 +8,3 @@
 #include "nanovg.h"
 
 
-#include "core/window/abys_window.h"
-#include "core/abys_utils.h"
-#include "core/abys_types.h"

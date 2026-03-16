@@ -6,15 +6,20 @@
 
 #include "core/window/abys_window.h"
 #include "core/abys_utils.h"
+#include "core/window/abys_event.h"
 
 
 #include "core/internals/abys_i.h"
+#include "core/internals/abys__window.h"
+
+
 
 #define NANOVG_GL3_IMPLEMENTATION
 #include "nanovg_gl.h"
 
 
 
+/* Internals */
 
 
 
@@ -22,6 +27,8 @@
 
 
 
+
+/* functions */
 
 int abys_Start(abys_Uint32 flags)
 {
@@ -53,9 +60,10 @@ int abys_Start(abys_Uint32 flags)
 
 abys_Window* abys_OpenWindow(int width, int height, const char* title, abys_Uint32 flags)
 {
+    abys__InitWindowFlags(flags);
     GLFWwindow* window_handle = glfwCreateWindow(width, height, title, NULL, NULL);
 
-    if (ABYS_NOT window_handle)
+    if (!window_handle)
     {
         abys_SetError("GLFW-Window Creation Failed!");
         goto ABYS_WINDOW_CREATION_FAILED;
@@ -65,7 +73,7 @@ abys_Window* abys_OpenWindow(int width, int height, const char* title, abys_Uint
     glfwMakeContextCurrent(window_handle);
 
 
-    if (ABYS_NOT gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         abys_SetError("Failed to initialize GLAD");
         goto ABYS_WINDOW_CREATION_FAILED;        
     }
@@ -74,7 +82,7 @@ abys_Window* abys_OpenWindow(int width, int height, const char* title, abys_Uint
 
     NVGcontext* nvg_ctx = nvgCreateGL3(NVG_ANTIALIAS);
     
-    if (ABYS_NOT nvg_ctx)
+    if (!nvg_ctx)
     {
         abys_SetError("Failed to create nvg context!");
         goto ABYS_WINDOW_CREATION_FAILED;
@@ -83,18 +91,30 @@ abys_Window* abys_OpenWindow(int width, int height, const char* title, abys_Uint
 
     abys_Window* window = (abys_Window*)malloc(sizeof(abys_Window));
 
-    if (ABYS_NOT window)
+    if (!window)
     {
         abys_SetError("Memory allocation failed!");
         goto ABYS_WINDOW_CREATION_FAILED;
     }
 
+
     window->handle = window_handle;
     window->canvas = nvg_ctx;
+
+    window->color.r = 0.0f;
+    window->color.g = 0.0f;
+    window->color.b = 0.0f;
+
+    window->eventSystem = abys__InitEventSystem();
+
+    glfwSetWindowUserPointer(window_handle, window);
+    abys__SetWindowEventCallBacks(window_handle);
+
 
     ABYS_LOG_INFO("Window Creation Completed!");
     return window;
 
+    
 ABYS_WINDOW_CREATION_FAILED:
     ABYS_LOG_ERROR("Window Creation Failed! Reason: %s", abys_GetError());
     return NULL;
@@ -110,6 +130,7 @@ void abys_CloseWindow(abys_Window* window)
     glfwDestroyWindow(window->handle);
     nvgDeleteGL3(window->canvas);
 
+    free(window->eventSystem);
     free(window);
 
     abys_ResetError();
@@ -128,39 +149,30 @@ int abys_RunWindow(abys_Window* window)
 
     glfwPollEvents();
 
+    abys_UpdateInput(window);
+
+
     return (ABYS_NOT glfwWindowShouldClose(window->handle));
 }
 
 
-
-void abys_BeginFrame(abys_Window* window)
+int abys_StopWindow(abys_Window* window)
 {
-    ABYS__CHECK_WINDOW(window, "No Window found!", ABYS__RET_NOTHING);
+    ABYS__CHECK_WINDOW(window, "No Window found to close!", ABYS_FALSE);
 
-    int WindowWidth, WindowHeight;
-    glfwGetFramebufferSize(window->handle, &WindowWidth, &WindowHeight);
 
-    glViewport(0, 0, WindowWidth, WindowHeight);
-
-    nvgBeginFrame(window->canvas, WindowWidth, WindowHeight, 1.0f);
+    glfwSetWindowShouldClose(window->handle, ABYS_TRUE);
 }
 
 
 
 
-void abys_EndFrame(abys_Window* window)
+
+
+GLFWwindow* abys__GetWindowHandle(abys_Window* window)
 {
-    ABYS__CHECK_WINDOW(window, "No Window found!", ABYS__RET_NOTHING);
-
-    nvgEndFrame(window->canvas);
-    glfwSwapBuffers(window->handle);
-}
+    ABYS__CHECK_WINDOW(window, "No Window found to close!", NULL);
 
 
-
-
-void abys_ClearBackground(float r, float g, float b)
-{
-    glClearColor(r, g, b, 1.0f);  // <-- your bg color here
-    glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    return window->handle;
 }

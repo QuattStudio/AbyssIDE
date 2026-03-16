@@ -25,10 +25,7 @@ void abys_CloseWindow(abys_Window* window);
 
 
 int abys_RunWindow(abys_Window* window);
+int abys_StopWindow(abys_Window* window);
 
 
-void abys_BeginFrame(abys_Window* window);
-
-void abys_EndFrame(abys_Window* window);
-
-void abys_ClearBackground(float r, float g, float b);
+GLFWwindow* abys__GetWindowHandle(abys_Window* window);

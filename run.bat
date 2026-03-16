@@ -53,4 +53,3 @@ if %ERRORLEVEL% == 0 (
 )
 
 endlocal
-pause

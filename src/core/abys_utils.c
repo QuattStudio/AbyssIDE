@@ -30,3 +30,45 @@ void abys_ResetError() {
 const char* abys_GetError() {
     return g_last_error[0] ? g_last_error : " ";
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include <stdint.h>
+
+#if defined(_WIN32)
+    #include <windows.h>
+#else
+    #include <time.h>
+#endif
+
+
+void abys_Delay(abys_Uint32 ms)
+{
+#if defined(_WIN32)
+
+    Sleep(ms);
+
+#else
+
+    struct timespec ts;
+    ts.tv_sec  = ms / 1000;
+    ts.tv_nsec = (ms % 1000) * 1000000;
+
+    nanosleep(&ts, NULL);
+
+#endif
+}

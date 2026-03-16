@@ -48,4 +48,38 @@ typedef struct abys_Rect
 
 
 
+typedef struct abys_Point
+{
+    int x, y;
+} abys_Point;
 
+
+
+typedef struct abys_Color
+{
+    int r, g, b, a;
+} abys_Color;
+
+
+typedef struct abys_Colorf
+{
+    float r, g, b, a;
+} abys_Colorf;
+
+
+
+
+
+
+
+
+
+
+
+/* macros for types casting */
+
+
+#define ABYS_RGBA(r, g, b, a)   ((abys_Color){r, g, b, a})
+#define ABYS_RECT(x, y, w, h)   ((abys_Rect){x, y, w, h})
+#define ABYS_POINT(x, y)        ((abys_Point){x, y})
+#define ABYS_COLORF(r, g, b, a) ((abys_Colorf){r, g, b, a})

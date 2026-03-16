@@ -3,10 +3,15 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
+#include "core/abys_types.h"
 
 
+
+
+/* macros */
 
 #define ABYS_LOG_INFO(fmt, ...) \
     printf("[INFO] > " fmt "\n", ##__VA_ARGS__)
@@ -69,6 +74,11 @@
 
 
 
+#define ABYS_MAX_OPACITY_INT        255
+#define ABYS_MAX_OPACITY_FLOAT      1.0f
+
+
+
 
 
 #define ABYS__RET_NOTHING
@@ -81,6 +91,28 @@
 
 
 
+#define ABYS__EXCEPT_WINDOW_NOT_FOUND   "No Window Found!"
+
+
+#define ABYS__INIT_WITH_ZERO(obj)   memset(obj, 0, sizeof(obj))
+#define ABYS__INIT_WITH_ZERO_F(obj)   memset(obj, 0.0f, sizeof(obj))
+
+
+#define ABYS_INLINE     static inline
+#define ABYS_MALLOC(obj)  ((obj*)malloc(sizeof((obj))))
+
+
+/* flags */
+
+#define ABYS_FLAG_SHIFT(n)      (1 << n)
+
+
+
+#define ABYS_WINDOW_MAXIMIZED       ABYS_FLAG_SHIFT(0)
+#define ABYS_WINDOW_RESIZABLE       ABYS_FLAG_SHIFT(1)
+#define ABYS_WINDOW_DECORATED       ABYS_FLAG_SHIFT(2)
+#define ABYS_WINDOW_UNDECORATED     ABYS_FLAG_SHIFT(3)
+#define ABYS_WINDOW_FLOATING     ABYS_FLAG_SHIFT(4)
 
 
 
@@ -89,6 +121,8 @@
 
 
 
+
+/* functions */
 
 
 #define ERR_MSG_LEN 256
@@ -102,3 +136,14 @@ void abys_ResetError();
 
 // Get the last error (returns NULL if empty)
 const char* abys_GetError();
+
+
+
+
+
+
+
+
+
+
+void abys_Delay(abys_Uint32 ms);
